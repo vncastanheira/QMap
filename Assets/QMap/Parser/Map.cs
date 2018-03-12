@@ -132,6 +132,29 @@ namespace QMap
                 brushIndex++;
             }
         }
+        
+        internal void DrawPlane(Plane plane, float size = 1f)
+        {
+            Vector3 position = (size * plane.distance * plane.normal);
+            Vector3 v3;
+            if(plane.normal.normalized != Vector3.forward)
+                v3 = Vector3.Cross(plane.normal, Vector3.forward).normalized * plane.normal.magnitude;
+            else
+                v3 = Vector3.Cross(plane.normal, Vector3.up).normalized * plane.normal.magnitude; ;
+
+            var corner0 = position + v3;
+            var corner2 = position - v3;
+            var q = Quaternion.AngleAxis(90f, plane.normal);
+            var corner1 = position + v3;
+            var corner3 = position - v3;
+            Debug.DrawLine(corner0, corner2, Color.green);
+            Debug.DrawLine(corner1, corner3, Color.green);
+            Debug.DrawLine(corner0, corner1, Color.green);
+            Debug.DrawLine(corner1, corner2, Color.green);
+            Debug.DrawLine(corner2, corner3, Color.green);
+            Debug.DrawLine(corner3, corner0, Color.green);
+            Debug.DrawRay(position, plane.normal, Color.red);
+        }
 
         private void OnDrawGizmos()
         {
@@ -139,14 +162,17 @@ namespace QMap
             {
                 foreach (var brush in e.Brushes)
                 {
+                    foreach (var face in brush.Faces)
+                    {
+//                        DrawPlane(face.Plane, 2f);
+                    }
+
                     if (brush.Polys == null)
                         return;
 
                     float c = 1.0f;
                     foreach (var p in brush.Polys)
                     {
-                        Gizmos.color = new Color(c, 1, 1);
-
                         if (p.Vertices != null)
                         {
                             Vector3 prev = Vector3.zero;
@@ -160,8 +186,8 @@ namespace QMap
                                 prev = v;
                                 i++;
                             }
-
-                            c -= 0.2f;
+                            if(i > 0)
+                                Gizmos.DrawLine(prev, p.Vertices[0]);
                         }
                     }
                 }

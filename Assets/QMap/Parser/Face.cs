@@ -26,6 +26,8 @@ namespace QMap
             Rotation = rotation;
             XScale = xScale;
             YScale = yScale;
+
+            Debug.Log(" > Plane: " + Plane);
         }
 
         internal Face(Plane plane, string textureName, int xOffset, int yOffset, int rotation, float xScale, float yScale)

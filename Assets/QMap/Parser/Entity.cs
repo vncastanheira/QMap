@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace QMap
 {
+    [System.Serializable]
     internal class Entity
     {
         private List<Brush> brushes = new List<Brush>();

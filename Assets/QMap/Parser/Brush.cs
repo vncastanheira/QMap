@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace QMap
 {
+    [System.Serializable]
     internal class Brush
     {
         private List<Face> faces = new List<Face>();
@@ -55,6 +56,10 @@ namespace QMap
                     }
                 }
             }
+
+            // sort the vertices on each polygon
+            foreach (var p in Polys)
+                p.SortVertices();
         }
 
         internal bool GetIntersection(Face f1, Face f2, Face f3, out Vector3 vertex)
