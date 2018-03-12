@@ -6,19 +6,16 @@ using UnityEngine;
 
 namespace QMap
 {
-    struct Polygon
+    [Serializable]
+    internal struct Polygon
     {
-        List<Vector3> Vertices;
-
-        public static Polygon Create()
+        internal List<Vector3> Vertices { get; private set; }
+        
+        internal void AddVertex(Vector3 vertex)
         {
-            var p = new Polygon();
-            p.Vertices = new List<Vector3>();
-            return p;
-        }
+            if (Vertices == null)
+                Vertices = new List<Vector3>();
 
-        public void AddVertex(Vector3 vertex)
-        {
             Vertices.Add(vertex);
         }
     }

@@ -1,0 +1,16 @@
+// Game: Quake
+// Format: Standard
+// entity 0
+{
+"classname" "worldspawn"
+"wad" "C:/Users/vinic/Documents/QuakeDev/wads/START.WAD"
+// brush 0
+{
+( 192 -0 16 ) ( 192 64 48 ) ( 192 64 16 ) __TB_empty -0 -0 -0 1 1
+( -48 -0 16 ) ( -48 64 48 ) ( -48 -0 48 ) __TB_empty -0 -0 -0 1 1
+( -48 64 16 ) ( 16 64 48 ) ( -48 64 48 ) __TB_empty -0 -0 -0 1 1
+( -48 -192 16 ) ( 16 -192 48 ) ( 16 -192 16 ) bricka2_2 16 -0 -0 1 1
+( -48 -0 192 ) ( 16 64 192 ) ( 16 -0 192 ) bricka2_1 16 -32 -0 1 1
+( -48 -0 -0 ) ( 16 64 -0 ) ( -48 64 -0 ) __TB_empty -0 -0 -0 1 1
+}
+}

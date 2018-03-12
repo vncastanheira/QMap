@@ -9,10 +9,12 @@ namespace QMap
 {
     public class Map : MonoBehaviour
     {
-        private List<Entity> entities = new List<Entity>();
-        public List<Entity> Entities { get { return entities; } }
+        Texture error;
 
-        public void AddEntity(Entity e)
+        private List<Entity> entities = new List<Entity>();
+        internal List<Entity> Entities { get { return entities; } }
+
+        internal void AddEntity(Entity e)
         {
             entities.Add(e);
         }
@@ -45,12 +47,9 @@ namespace QMap
                                 Brush b = new Brush();
                                 while (tokenizer.PeekNextToken().Type != Tokenizer.TokenType.EndBlock)
                                 {
-                                    Vector3 v1 = new Vector3();
-                                    Vector3 v2 = new Vector3();
-                                    Vector3 v3 = new Vector3();
-                                    v1.FromToken(tokenizer);
-                                    v2.FromToken(tokenizer);
-                                    v3.FromToken(tokenizer);
+                                    Vector3 v1 = Vector3Extension.FromToken(tokenizer);
+                                    Vector3 v2 = Vector3Extension.FromToken(tokenizer);
+                                    Vector3 v3 = Vector3Extension.FromToken(tokenizer);
 
                                     string textureName = tokenizer.GetNextValue();
                                     int xOffset = Convert.ToInt32(tokenizer.GetNextValue());
@@ -58,8 +57,10 @@ namespace QMap
                                     int rotation = Convert.ToInt32(tokenizer.GetNextValue());
                                     float xScale = Convert.ToSingle(tokenizer.GetNextValue());
                                     float yScale = Convert.ToSingle(tokenizer.GetNextValue());
-                                    b.AddFace(new Face(v1, v2, v3, textureName, xOffset, yOffset, rotation, xScale, yScale));
+                                    var newFace = new Face(v1, v2, v3, textureName, xOffset, yOffset, rotation, xScale, yScale);
+                                    b.AddFace(newFace);
                                 }
+                                b.CreatePolygons();
                                 tokenizer.GetNextToken(); // Brush end block
                                 e.AddBrush(b);
                                 break;
@@ -72,13 +73,15 @@ namespace QMap
                 }
             }
 
-            Debug.Log("Created " + entities.Count + " entities.");
+            Debug.Log("Map created.");
+            Debug.Log(" -" + entities.Count + " entities.");
+            Debug.Log(" -" + entities[0].Brushes.Count + " brushes.");
         }
 
         /// <summary>
         /// Create the visual representation of the map
         /// </summary>
-        public void CreateMap()
+        internal void CreateMap()
         {
             // create the worldspawn map
             var world = entities.SingleOrDefault(e => e.IsWorld());
@@ -129,6 +132,40 @@ namespace QMap
                 brushIndex++;
             }
         }
-        
+
+        private void OnDrawGizmos()
+        {
+            foreach (var e in entities)
+            {
+                foreach (var brush in e.Brushes)
+                {
+                    if (brush.Polys == null)
+                        return;
+
+                    float c = 1.0f;
+                    foreach (var p in brush.Polys)
+                    {
+                        Gizmos.color = new Color(c, 1, 1);
+
+                        if (p.Vertices != null)
+                        {
+                            Vector3 prev = Vector3.zero;
+                            int i = 0;
+                            foreach (var v in p.Vertices)
+                            {
+                                Gizmos.DrawSphere(v, 2f);
+                                if (i > 0)
+                                    Gizmos.DrawLine(prev, v);
+
+                                prev = v;
+                                i++;
+                            }
+
+                            c -= 0.2f;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using QMap;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -34,7 +35,7 @@ namespace QMap.Editor
                     GameObject mapGO = new GameObject(mapName.Replace(".map", string.Empty));
                     Map map = mapGO.AddComponent<Map>();
 
-                    float snapTime = Time.time;
+                    var snapTime = DateTime.Now;
 
                     try
                     {
@@ -46,7 +47,7 @@ namespace QMap.Editor
                         Debug.LogError(ex.Message);
                     }
 
-                    Debug.Log("Reimported Map: " + mapName + "\nTook " + (Time.time - snapTime));
+                    Debug.Log("Reimported Map: " + mapName + "\nTook " + (DateTime.Now - snapTime).Seconds + " seconds");
                 }
             }
 
