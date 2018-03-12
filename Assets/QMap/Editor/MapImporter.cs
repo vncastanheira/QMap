@@ -38,7 +38,8 @@ namespace QMap.Editor
 
                     try
                     {
-                        map.CreateMap(tokenizer);
+                        map.ReadToken(tokenizer);   // process the map
+//                        map.CreateMap();            // create the visual brushes and entities
                     }
                     catch (System.FormatException ex)
                     {

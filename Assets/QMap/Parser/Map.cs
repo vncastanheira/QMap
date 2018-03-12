@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace QMap
@@ -15,7 +17,7 @@ namespace QMap
             entities.Add(e);
         }
 
-        public void CreateMap(Tokenizer tokenizer)
+        public void ReadToken(Tokenizer tokenizer)
         {
             while (tokenizer.PeekNextToken().Type != Tokenizer.TokenType.EndOfStream)
             {
@@ -43,7 +45,7 @@ namespace QMap
                                 Brush b = new Brush();
                                 while (tokenizer.PeekNextToken().Type != Tokenizer.TokenType.EndBlock)
                                 {
-                                    Vector3 v1 = new Vector3(); 
+                                    Vector3 v1 = new Vector3();
                                     Vector3 v2 = new Vector3();
                                     Vector3 v3 = new Vector3();
                                     v1.FromToken(tokenizer);
@@ -72,5 +74,61 @@ namespace QMap
 
             Debug.Log("Created " + entities.Count + " entities.");
         }
+
+        /// <summary>
+        /// Create the visual representation of the map
+        /// </summary>
+        public void CreateMap()
+        {
+            // create the worldspawn map
+            var world = entities.SingleOrDefault(e => e.IsWorld());
+            if (world == null)
+            {
+                Debug.LogWarning("worldspawn class could not be found.");
+                return;
+            }
+            
+            // loop all world brushes
+            int brushIndex = 0;
+            foreach (var brush in world.Brushes)
+            {
+                Debug.Log("Creating brush " + brushIndex + "\nFaces: " + brush.Faces.Count);
+
+                GameObject brushGO = new GameObject("brush " + brushIndex);
+                MeshFilter brushMF = brushGO.AddComponent<MeshFilter>();
+                MeshRenderer brushMR = brushGO.AddComponent<MeshRenderer>();
+                brushGO.transform.SetParent(transform);
+                brushGO.transform.SetSiblingIndex(brushIndex);
+
+                var mesh = new Mesh();
+
+                List<Vector3> vertices = new List<Vector3>();
+                List<Vector2> uv = new List<Vector2>();
+
+                int ti = 0;
+                int submesh = 0;
+                foreach (var face in brush.Faces)
+                {
+
+                    uv.Add(new Vector2(face.XOffset, face.YOffset));
+                    //                    mesh.Clear();
+                }
+                try
+                {
+                    mesh.SetVertices(vertices);
+                    mesh.SetUVs(0, uv);
+                }
+                catch (UnityEngine.UnityException ex)
+                {
+                    Debug.LogError(ex);
+                }
+
+                mesh.RecalculateNormals();
+                brushMF.mesh = brushMF.sharedMesh = mesh;
+
+                brushIndex++;
+            }
+        }
+        
     }
 }

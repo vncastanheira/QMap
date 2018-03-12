@@ -9,8 +9,20 @@ namespace QMap
         private Dictionary<string, string> keyvals = new Dictionary<string, string>();
 
         public ReadOnlyCollection<Brush> Brushes { get { return brushes.AsReadOnly(); } }
-        public Dictionary<string, string> KeyVals { get { return keyvals; } }
+        public Dictionary<string, string> Properties { get { return keyvals; } }
+
         public void AddBrush(Brush b) { brushes.Add(b); }
+
+        /// <summary> Check if the entity is the world map </summary>
+        public bool IsWorld()
+        {
+            string classname = string.Empty;
+            if (keyvals.TryGetValue("classname", out classname))
+            {
+                return classname.Equals("worldspawn");
+            }
+            return false;
+        }
 
         public string this[string key]
         {
